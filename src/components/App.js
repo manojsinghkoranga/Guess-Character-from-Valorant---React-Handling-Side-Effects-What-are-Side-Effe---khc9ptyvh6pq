@@ -129,16 +129,47 @@ const App = () => {
   const [score, setScore] = useState(0);
 
   const changeChar = () => {
-    
+    const number = Math.floor(Math.random() * 19);
+    const character = characters[number];
+    const testCaseObject = {
+      name : character.name,
+      role: character.role,
+      abilities: character.abilities,
+      options: [character],
+    }
+
+    while(testCaseObject.options.length < 4){
+      const num = Math.floor(Math.random()*19);
+      const testCaseOption =  characters[num];
+      if(!testCaseObject.options.includes(testCaseOption)){
+        testCaseObject.options.push(testCaseOption);
+      }
+    }
+
+    const suffleOptions = () => {
+      let num = Math.floor(Math.random() * 10) + 1;
+      while(num > 0){
+        const opt = testCaseObject.options.shift();
+        testCaseObject.options.push(opt);
+        num--;
+      }
+    }
+    suffleOptions();
+
+    setCurrChar(testCaseObject);
   };
 
   const scoreHandler = (e) => {
-   
+   if(e.target.value === currChar.name){
+    setScore(score + 1);
+   }
+
+   changeChar();
   };
 
   useEffect(() => {
-   
-  });
+   changeChar();
+  }, []);
   return (
     <div id="main">
       <div className="container">
@@ -150,7 +181,7 @@ const App = () => {
           {currChar.abilities.join()}
           <div className="options">
             {currChar.options.map((option) => (
-              <button   onClick={scoreHandler}>
+              <button key={option.name} value={option.name} onClick={scoreHandler}>
                 {option.name}
               </button>
             ))}
